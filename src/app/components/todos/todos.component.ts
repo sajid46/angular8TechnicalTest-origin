@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { ITodo, Todo } from "src/app/models/todo.model";
 import { TodoService } from "src/app/services/todo.service";
 
-import { map, tap } from "rxjs/operators";
+import { map, takeUntil, tap } from "rxjs/operators";
 import { FormControl, FormGroup } from "@angular/forms";
 
 @Component({
@@ -22,20 +22,25 @@ export class TodosComponent implements OnInit, OnDestroy {
   newTaskForm = new FormGroup({ newtask: new FormControl() });
   newTask: string;
 
+  protected unsubscribe$ = new Subject<void>();
+
   constructor(private service: TodoService) {}
-  ngOnDestroy(): void {
-    // observable unsubscribe codes
-  }
 
   ngOnInit(): void {
     this.isChecked = false;
     this.FetchToList();
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
   private FetchToList() {
-    this.todoslist$ = this.service
-      .getTodos()
-      .pipe(map((todos) => todos as ITodo[]));
+    this.todoslist$ = this.service.getTodos().pipe(
+      takeUntil(this.unsubscribe$),
+      map((todos) => todos as ITodo[])
+    );
 
     this.sort();
   }
