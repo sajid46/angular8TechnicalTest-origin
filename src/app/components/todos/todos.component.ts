@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Observable, Subject } from "rxjs";
-import { ITodo, Todo } from "src/app/models/todo.model";
+import { ITodo } from "src/app/models/todo.model";
 import { TodoService } from "src/app/services/todo.service";
 
 import { map, takeUntil, tap } from "rxjs/operators";
