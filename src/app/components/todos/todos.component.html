@@ -1,0 +1,78 @@
+<div
+  class="container css-todos-container"
+  *ngIf="todoslist$ | async as todoslist"
+>
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="m-auto css-heading text-center fixed-top">
+      <h1>TODO LIST</h1>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 m-auto row pb-5 pt-5">
+      <form
+        [formGroup]="newTaskForm"
+        class="newtask-form"
+        (submit)="addNewTask($event)"
+      >
+        <mat-form-field class="newtask-full-width">
+          <mat-label>New Task</mat-label>
+          <input
+            type="text"
+            id="newtask"
+            [(ngModel)]="newTask"
+            formControlName="newtask"
+            matInput
+            placeholder="Enter your new task..."
+            style="text-transform: capitalize; font-size: 26px"
+          />
+        </mat-form-field>
+      </form>
+    </div>
+    <div>
+      <div class="row" *ngIf="todoslist != undefined && todoslist.length > 0">
+        <div
+          *ngFor="let item of todoslist; let i = index"
+          class="col-xs-10 col-sm-10 col-md-10 col-lg-10 m-auto row css-todos-content"
+        >
+          <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+            <mat-checkbox
+              id="{{ item.id }}"
+              class="css-checkbox"
+              [(ngModel)]="item.status"
+              (change)="completedTodo($event)"
+            ></mat-checkbox>
+          </div>
+          <div
+            class="col-xs-10 col-sm-10 col-md-10 col-lg-10 pt-1 css-{{
+              item.id
+            }}"
+          >
+            <ng-container *ngIf="item.status == true; else notLabelCompleted">
+              <label style="text-decoration: line-through; color: #655f5f">{{
+                item.tasks
+              }}</label>
+            </ng-container>
+
+            <ng-template #notLabelCompleted>
+              <label>{{ item.tasks }}</label>
+            </ng-template>
+          </div>
+
+          <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
+            <i
+              class="fa fa-trash"
+              id="{{ item.id }}"
+              (click)="removeTodo($event)"
+            ></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="todoslist == undefined || todoslist.length == 0">
+      <div
+        class="col-xs-10 col-sm-10 col-md-10 col-lg-10 m-auto row css-todos-content"
+      >
+        <h5>Your task list is empty.</h5>
+      </div>
+    </div>
+  </div>
+</div>
